@@ -73,7 +73,7 @@ public class EnhancementUI : BasicBody
             if (!item.IsWeapon()) return;
             if (item.TryGetGlobalItem<EnhancementItem>(out var enhancement))
             {
-                enhancement.Level = Math.Min(enhancement.Level + 5, enhancement.MaxLevel);
+                enhancement.Level = Math.Min(enhancement.Level + 50, 1150 + enhancement.LevelCap);
                 item.prefix = 0;
                 item.Refresh(false);
                 item.position = Main.LocalPlayer.Center - item.Size / 2f;

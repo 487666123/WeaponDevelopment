@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj": {}
+    "c:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj": {}
   },
   "projects": {
-    "C:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj": {
+    "c:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj",
+        "projectUniqueName": "c:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj",
         "projectName": "WeaponDevelopment",
-        "projectPath": "C:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj",
+        "projectPath": "c:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\WeaponDevelopment.csproj",
         "packagesPath": "C:\\Users\\48766\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\obj\\",
+        "outputPath": "c:\\Users\\48766\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\WeaponDevelopment\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -16,7 +15,7 @@ public class EnhancementItem : GlobalItem
 
     #region 强化等级上限 & 基本强化经验 & 强化经验
 
-    public static readonly int EnhancementLevelCap = 100;
+    public static readonly int MaxLevelCap = 100;
     public static readonly int BaseEXP = 1000;
     public static readonly int EXPPerLevel = 1000;
 
@@ -25,20 +24,31 @@ public class EnhancementItem : GlobalItem
     /// <summary>
     /// 强化等级
     /// </summary>
-    public int Level = 1;
-    public int MaxLevel = 50;
+    public int Level = 0;
+    public int LevelCap = 50;
 
     /// <summary>
     /// 强化经验
     /// </summary>
     public int EXP;
-    public int RequiredEXP => Level * EXPPerLevel;
+    public int RequiredEXP => BaseEXP + (Level - 1) * EXPPerLevel;
+
+    // 可以添加升级检测逻辑
+    public void AddExp(int amount)
+    {
+        EXP += amount;
+        while (EXP >= RequiredEXP && Level < MaxLevelCap)
+        {
+            EXP -= RequiredEXP;
+            Level++;
+        }
+    }
 
     /// <summary>
     /// 更新状态
     /// </summary>
     /// <param name="item"></param>
-    public void AapplyLevelBonuses(Item item)
+    public void ApplyLevelBonuses(Item item)
     {
         if (!item.IsWeapon()) return;
 
@@ -50,32 +60,43 @@ public class EnhancementItem : GlobalItem
         item.SetNameOverride(item.Name + $" lv.{Level}");
     }
 
-    public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+    public override void ModifyItemScale(Item item, Player player, ref float scale)
     {
-        return base.Shoot(item, player, source, position, velocity, type, damage, knockback);
+        if (item.useStyle == ItemUseStyleID.Swing && item.DamageType == DamageClass.Melee)
+            scale += GetItemScaleBonus();
     }
 
     public override void ModifyShootStats(Item item, Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
     {
-        if (float.IsNaN(velocity.X) || float.IsNaN(velocity.Y) || velocity == Vector2.Zero) return;
+        if (item.DamageType != DamageClass.Ranged || float.IsNaN(velocity.X) || float.IsNaN(velocity.Y) || velocity == Vector2.Zero) return;
 
         var shootSpeed = velocity.Length() * GetShootSpeedMultiplier();
         velocity = Vector2.Normalize(velocity) * shootSpeed;
     }
 
-    public int GetCritBonus() => (int)Math.Round(Level * 0.5f);
+    // 大小
+    public readonly float ItemScalePerLevel = 0.15f / 100f;
+    public float GetItemScaleBonus() => Level * ItemScalePerLevel;
 
-    public readonly float ManaCostPerLevel = -0.25f / 100f;
-    public float GetManaCostBonus() => MathF.Round(Level * ManaCostPerLevel, 2);
-
+    // 伤害
     public readonly float DamageMultiplierPerLevel = 1f / 100f;
     public float GetDamageMultiplier() => 1 + Level * DamageMultiplierPerLevel;
 
-    public readonly float ShootSpeedPerLevel = 0.25f / 100f;
-    public float GetShootSpeedMultiplier() => 1 + Level * ShootSpeedPerLevel;
+    // 暴击
+    public readonly float CritPerLevel = 0.3f;
+    public int GetCritBonus() => (int)Math.Round(Level * CritPerLevel);
 
+    // 使用速度
     public readonly float UseSpeedPerLevel = 0.5f / 100f;
     public float GetUseSpeedMultiplier() => 1 + Level * UseSpeedPerLevel;
+
+    // 弹幕速度
+    public readonly float ShootSpeedPerLevel = 0.3f / 100f;
+    public float GetShootSpeedMultiplier() => 1 + Level * ShootSpeedPerLevel;
+
+    // 魔力消耗
+    public readonly float ManaCostPerLevel = -0.3f / 100f;
+    public float GetManaCostBonus() => Level * ManaCostPerLevel;
 
     // 修改伤害
     public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage) => damage *= GetDamageMultiplier();
@@ -101,13 +122,13 @@ public class EnhancementItem : GlobalItem
             tooltips.Insert(++itemNameIndex, new(Mod, "-1-", "---------------"));
 
             // 强化等级
-            tooltips.Insert(++itemNameIndex, new(Mod, nameof(Level), $"等级 {Level}/{MaxLevel}")
+            tooltips.Insert(++itemNameIndex, new(Mod, nameof(Level), $"等级 {Level}/{LevelCap}")
             {
                 OverrideColor = Color.DeepPink
             });
 
             // 强化经验 (等级满了就不显示经验值了)
-            if (Level < 100)
+            if (Level < MaxLevelCap)
             {
                 tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"经验 {EXP}/{RequiredEXP}")
                 {
@@ -127,14 +148,23 @@ public class EnhancementItem : GlobalItem
             // 暴击
             tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"暴击 {GetCritBonus():+0;-0;0}%")
             {
-                OverrideColor = Color.LightYellow
+                OverrideColor = Color.Yellow
             });
 
-            // 速度
-            tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"速度 {(GetUseSpeedMultiplier() - 1) * 100:+0;-0;0}%")
+            // 使用速度
+            tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"使用速度 {(GetUseSpeedMultiplier() - 1) * 100:+0;-0;0}%")
             {
-                OverrideColor = Color.YellowGreen
+                OverrideColor = Color.GreenYellow
             });
+
+            // 弹幕速度
+            if (entity.DamageType == DamageClass.Ranged && entity.shoot is not ProjectileID.None)
+            {
+                tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"弹幕速度 {(GetShootSpeedMultiplier() - 1) * 100:+0;-0;0}%")
+                {
+                    OverrideColor = Color.LawnGreen
+                });
+            }
 
             // 魔力消耗
             if (entity.mana > 0) // 消耗魔力的武器才会显示
@@ -142,6 +172,15 @@ public class EnhancementItem : GlobalItem
                 tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"魔力消耗 {GetManaCostBonus() * 100f:+0;-0;0}%")
                 {
                     OverrideColor = Color.BlueViolet
+                });
+            }
+
+            // 大小
+            if (entity.useStyle == ItemUseStyleID.Swing && entity.DamageType == DamageClass.Melee)
+            {
+                tooltips.Insert(++itemNameIndex, new(Mod, nameof(EXP), $"大小 {GetItemScaleBonus() * 100:+0;-0;0}%")
+                {
+                    OverrideColor = Color.Orange
                 });
             }
 
@@ -169,7 +208,7 @@ public class EnhancementItem : GlobalItem
         Level = reader.Read7BitEncodedInt();
         EXP = reader.Read7BitEncodedInt();
 
-        AapplyLevelBonuses(item);
+        ApplyLevelBonuses(item);
     }
 
     public override void SaveData(Item item, TagCompound tag)
@@ -184,15 +223,13 @@ public class EnhancementItem : GlobalItem
         {
             Level = levelValue;
         }
-        else { Level = 1; }
 
         if (tag.TryGet<int>(nameof(EXP), out var EXPValue))
         {
             EXP = EXPValue;
         }
-        else { EXP = 0; }
 
-        AapplyLevelBonuses(item);
+        ApplyLevelBonuses(item);
     }
 
     #endregion
