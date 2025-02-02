@@ -230,3 +230,4 @@ c:\Users\48766\Documents\My Games\Terraria\tModLoader\ModSources\WeaponDevelopme
 c:\Users\48766\Documents\My Games\Terraria\tModLoader\ModSources\WeaponDevelopment\bin\Debug\net8.0\Microsoft.Extensions.Primitives.xml
 c:\Users\48766\Documents\My Games\Terraria\tModLoader\ModSources\WeaponDevelopment\bin\Debug\net8.0\Microsoft.VisualStudio.Setup.Configuration.Interop.xml
 c:\Users\48766\Documents\My Games\Terraria\tModLoader\ModSources\WeaponDevelopment\bin\Debug\net8.0\System.Diagnostics.EventLog.xml
+c:\Users\48766\Documents\My Games\Terraria\tModLoader\ModSources\WeaponDevelopment\obj\Debug\net8.0\WeaponDevelopment.sourcelink.json
