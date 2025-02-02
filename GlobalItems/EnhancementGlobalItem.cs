@@ -147,12 +147,10 @@ public class EnhancementGlobalItem : GlobalItem
         }
 
         // 显示有什么 tooltips
-        // var contents = string.Join("\n", tooltips.Select(i => i.Name));
-        // var tl = new TooltipLine(Mod, "contents", contents)
-        // {
-        //     OverrideColor = Color.Pink
-        // };
-        // tooltips.Add(tl);
+        tooltips.Add(new(Mod, "contents", string.Join("\n", tooltips.Select(i => i.Name)))
+        {
+            OverrideColor = Color.Pink
+        });
     }
 
     #region {Net Send & Receive} and {Save & Load Data}
