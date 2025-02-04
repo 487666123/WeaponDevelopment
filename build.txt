@@ -1,4 +1,4 @@
 displayName = 武器养成 / Weapon Development
-author = zero
-version = 0.1
+author = 太阳照常升起
+version = 1.0.0.2
 modReferences = SilkyUIFramework

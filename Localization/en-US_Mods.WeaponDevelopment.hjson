@@ -1,11 +1,11 @@
 Items: {
-	EnhancementStone2: {
-		DisplayName: 能量晶体 Ⅱ
+	EnhancementStone: {
+		DisplayName: 能量晶体
 		Tooltip: 装备的强化材料
 	}
 
 	EvolutionStone: {
 		DisplayName: 进阶石
-		Tooltip: 100 EXP
+		Tooltip: 100 Exp
 	}
 }

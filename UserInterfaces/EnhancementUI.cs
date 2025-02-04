@@ -31,6 +31,13 @@ public class EnhancementUI : BasicBody
         }.Join(this);
         view.SetPadding(4f);
 
+        var title = new SUIText()
+        {
+            Text = "装备强化",
+            TextScale = 0.75f,
+            TextAlign = new Vector2(0.5f),
+        }.Join(view);
+
         var itemContainer = new View
         {
             Display = Display.Flexbox,
@@ -38,22 +45,22 @@ public class EnhancementUI : BasicBody
             Gap = new Vector2(4f),
         }.Join(view);
 
-        var destinationSlot = new SUIItemSlot()
+        var weaponSlot = new SUIItemSlot()
         {
             CornerRadius = new Vector4(8f),
         }.Join(itemContainer);
-        destinationSlot.BorderColor = Color.Black * 0.5f;
-        destinationSlot.BgColor = Color.Black * 0.25f;
-        destinationSlot.SetSize(52, 52);
+        weaponSlot.BorderColor = Color.Black * 0.5f;
+        weaponSlot.BgColor = Color.Black * 0.25f;
+        weaponSlot.SetSize(52, 52);
 
-        var enhancementStoneslot = new SUIItemSlot()
+        var stonelot = new SUIItemSlot()
         {
             CornerRadius = new Vector4(8f),
             ItemScale = 0.846f,
         }.Join(itemContainer);
-        enhancementStoneslot.BorderColor = Color.Black * 0.5f;
-        enhancementStoneslot.BgColor = Color.Black * 0.25f;
-        enhancementStoneslot.SetSize(52, 52);
+        stonelot.BorderColor = Color.Black * 0.5f;
+        stonelot.BgColor = Color.Black * 0.25f;
+        stonelot.SetSize(52, 52);
 
         var button = new SUIText
         {
@@ -67,15 +74,20 @@ public class EnhancementUI : BasicBody
         }.Join(view);
         button.SetSize(itemContainer.GetDimensions().Width, 30f);
 
+        title.SetWidth(itemContainer.GetDimensions().Width);
+
         button.OnLeftMouseDown += (_, _) =>
         {
-            var item = destinationSlot.Item;
+            var item = weaponSlot.Item;
             if (!item.IsWeapon()) return;
-            if (item.TryGetGlobalItem<EnhancementItem>(out var enhancement))
+
+            if (item.TryGetGlobalItem<ItemEnhancement>(out var enhancement))
             {
-                enhancement.Level = Math.Min(enhancement.Level + 50, 1150 + enhancement.LevelCap);
+                enhancement.ItemLevel.Enhance(stonelot.Item);
+
                 item.prefix = 0;
                 item.Refresh(false);
+
                 item.position = Main.LocalPlayer.Center - item.Size / 2f;
                 PopupText.NewText(PopupTextContext.ItemPickupToVoidContainer, item, 1, true);
                 SoundEngine.PlaySound(SoundID.Item37);
