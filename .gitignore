@@ -1,0 +1,4 @@
+# .NET 项目
+bin/
+obj/
+.vs/
