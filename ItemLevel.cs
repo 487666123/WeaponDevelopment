@@ -75,7 +75,6 @@ public partial class ItemLevel : TagSerializable
 
         // 名字
         item.ClearNameOverride();
-        item.SetNameOverride(item.Name + $" lv.{Level}");
     }
 
     /// <summary>

@@ -8,7 +8,7 @@ using SilkyUIFramework.BasicElements;
 namespace WeaponDevelopment.UserInterfaces;
 
 [XmlElementMapping("WD-ProgressBar")]
-public class ProgressBar : UIView
+public class ProgressBar : UIElementGroup
 {
     public event EventHandler<ValueChangedEventArgs<float>> ProgressChanged;
 
@@ -51,7 +51,7 @@ public class ProgressBar : UIView
         var size = Bounds.Size;
         size *= new Size(Progress, 1f);
 
-        _bar.BorderRadius = new Vector4(Math.Min(size.Width, size.Height) / 2);
+        _bar.BorderRadius = BorderRadius;
         _bar.Draw(position, size, false, SilkyUI.TransformMatrix);
     }
 }

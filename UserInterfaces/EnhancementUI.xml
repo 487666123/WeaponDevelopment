@@ -14,12 +14,19 @@
 		<ElementGroup FlexGrow="1" CrossContentAlignment="Stretch" CrossAlignment="Stretch"
 					  FitWidth="true" FitHeight="true" FlexDirection="Column" Gap="4">
 			<TextView Name="WeaponName" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
-					  BorderRadius="4" Text="???" TextScale="0.75"/>
-			<TextView Name="WeaponLevel" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
-					  BorderRadius="4" Text="???" TextScale="0.75"/>
-			<TextView Name="WeaponExp" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
-					  BorderRadius="4" Text="???" TextScale="0.75"/>
-			<WD-ProgressBar Name="Progress" Width="100%" Height="4px" Progress="0.5" BackgroundColor="rgba(0,0,0,0.25)"/>
+					  BorderRadius="4" BackgroundColor="rgba(0,0,0,0.25)" Text="???" TextScale="0.75"/>
+			<WD-ProgressBar Name="ProgressLevel" Width="100%" Height="30px" Progress="0.5"
+							BorderRadius="4" BackgroundColor="rgba(0,0,0,0.25)">
+				<TextView Name="WeaponLevel" FitWidth="false" FitHeight="false"
+						  Width="100%" Height="100%" Padding="8 4 8 4" TextAlign="0 0.5"
+						  Text="???" TextScale="0.75"/>
+			</WD-ProgressBar>
+			<WD-ProgressBar Name="ProgressExp" Width="100%" Height="30px" Progress="0.5"
+							BorderRadius="4" BackgroundColor="rgba(0,0,0,0.25)">
+				<TextView Name="WeaponExp" FitWidth="false" FitHeight="false"
+						  Width="100%" Height="100%" Padding="8 4 8 4" TextAlign="0 0.5"
+						  Text="???" TextScale="0.75"/>
+			</WD-ProgressBar>
 		</ElementGroup>
 	</ElementGroup>
 	<TextView Text="强化材料" TextScale="0.75" TextAlign="0.5"/>

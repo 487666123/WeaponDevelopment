@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using log4net.Core;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -61,9 +62,9 @@ public class ItemEnhancement : GlobalItem
     //    item.ResetPrefix();
     //}
 
-    public override void ModifyTooltips(Item entity, List<TooltipLine> tooltips)
+    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
     {
-        if (!entity.IsWeapon()) return;
+        if (!item.IsWeapon()) return;
 
         var itemNameIndex = tooltips.FindIndex(item => item.Name.Equals("ItemName"));
 
@@ -104,7 +105,7 @@ public class ItemEnhancement : GlobalItem
             });
 
             // 暴击
-            if (entity.DamageType != DamageClass.Summon)
+            if (item.DamageType != DamageClass.Summon)
             {
                 tooltips.Insert(++itemNameIndex, new(Mod, "CritBonus", $"暴击 {ItemLevel.CritBonus:+0;-0;0}%")
                 {
@@ -119,7 +120,7 @@ public class ItemEnhancement : GlobalItem
             });
 
             // 弹幕速度
-            if (entity.DamageType == DamageClass.Ranged && entity.shoot is not ProjectileID.None)
+            if (item.DamageType == DamageClass.Ranged && item.shoot is not ProjectileID.None)
             {
                 tooltips.Insert(++itemNameIndex, new(Mod, "ShootSpeedBonus", $"弹幕速度 {(ItemLevel.ShootSpeedMultiplier - 1) * 100:+0;-0;0}%")
                 {
@@ -128,7 +129,7 @@ public class ItemEnhancement : GlobalItem
             }
 
             // 魔力消耗
-            if (entity.mana > 0) // 消耗魔力的武器才会显示
+            if (item.mana > 0) // 消耗魔力的武器才会显示
             {
                 tooltips.Insert(++itemNameIndex, new(Mod, "ManaCostBonus", $"魔力消耗 {ItemLevel.ManaCostBonus * 100f:+0;-0;0}%")
                 {
@@ -137,7 +138,7 @@ public class ItemEnhancement : GlobalItem
             }
 
             // 大小
-            if (entity.useStyle == ItemUseStyleID.Swing && entity.DamageType == DamageClass.Melee)
+            if (item.useStyle == ItemUseStyleID.Swing && item.DamageType == DamageClass.Melee)
             {
                 tooltips.Insert(++itemNameIndex, new(Mod, "ItemScaleBonus", $"大小 {ItemLevel.ItemScaleBonus * 100:+0;-0;0}%")
                 {

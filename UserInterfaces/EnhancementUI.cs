@@ -28,11 +28,6 @@ public partial class EnhancementUI : BasicBody
         WeaponSlot.BorderColor = Color.Black * 0.5f;
         WeaponSlot.BackgroundColor = Color.Black * 0.25f;
 
-        WeaponName.BackgroundColor = SUIColor.Border * 0.5f;
-        WeaponLevel.BackgroundColor = SUIColor.Border * 0.5f;
-        WeaponExp.BackgroundColor = SUIColor.Border * 0.5f;
-
-
         WeaponSlot.ItemChanged += (_, args) => { UpdateInfo(args.NewValue); };
 
         for (var i = 0; i < 5; i++)
@@ -77,6 +72,15 @@ public partial class EnhancementUI : BasicBody
         };
     }
 
+    private void SetDefaultInfo()
+    {
+        WeaponName.Text = "???";
+        WeaponLevel.Text = "???";
+        ProgressLevel.Progress = 0;
+        WeaponExp.Text = "???";
+        ProgressExp.Progress = 0;
+    }
+
     private void UpdateInfo(Item item)
     {
         if (item.TryGetGlobalItem<ItemEnhancement>(out var itemEnhancement))
@@ -84,17 +88,12 @@ public partial class EnhancementUI : BasicBody
             var itemLevel = itemEnhancement.ItemLevel;
 
             WeaponName.Text = item.HoverName;
-            WeaponLevel.Text = $"lv.{itemLevel.Level}";
-            WeaponExp.Text = $"Exp.{itemLevel.Exp}/{itemLevel.ExpCap}";
-            Progress.Progress = itemLevel.Exp / (float)itemLevel.ExpCap;
+            WeaponLevel.Text = $"lv.{itemLevel.Level} / {itemLevel.LevelCap}";
+            ProgressLevel.Progress = itemLevel.Level / (float)itemLevel.LevelCap;
+            WeaponExp.Text = $"Exp.{itemLevel.Exp} / {itemLevel.ExpCap}";
+            ProgressExp.Progress = itemLevel.Exp / (float)itemLevel.ExpCap;
         }
-        else
-        {
-            WeaponName.Text = "???";
-            WeaponLevel.Text = "???";
-            WeaponExp.Text = "???";
-            Progress.Progress = 0;
-        }
+        else SetDefaultInfo();
     }
 
     protected override void Update(GameTime gameTime)
