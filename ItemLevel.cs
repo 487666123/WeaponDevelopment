@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using WeaponDevelopment.GlobalItems;
 using WeaponDevelopment.Items;
 
 namespace WeaponDevelopment;
@@ -24,15 +23,15 @@ public partial class ItemLevel : TagSerializable
     // 大小
     public static readonly float ItemScalePerLevel = 0.25f / 100f;
     // 伤害
-    public static readonly float DamageMultiplierPerLevel = 0.5f / 100f;
+    public static readonly float DamageMultiplierPerLevel = 1f / 100f;
     // 暴击
-    public static readonly float CritPerLevel = 0.3f;
+    public static readonly float CritPerLevel = 0.5f;
     // 使用速度
-    public static readonly float UseSpeedPerLevel = 0.3f / 100f;
+    public static readonly float UseSpeedPerLevel = 0.5f / 100f;
     // 弹幕速度
-    public static readonly float ShootSpeedPerLevel = 0.3f / 100f;
+    public static readonly float ShootSpeedPerLevel = 0.5f / 100f;
     // 魔力消耗
-    public static readonly float ManaCostPerLevel = -0.3f / 100f;
+    public static readonly float ManaCostPerLevel = -0.5f / 100f;
 
     #endregion
 
@@ -45,33 +44,34 @@ public partial class ItemLevel : TagSerializable
     public int Exp { get; private set; }
     public int ExpCap => BaseExp + Level * ExpPerLevel;
 
-    // 大小
+    /// <summary> 大小 </summary>
     public float ItemScaleBonus => Level * ItemScalePerLevel * StarRatingMultiplier;
 
-    // 伤害
+    public float BaseDamage => Level * 0.05f * StarRatingMultiplier;
+
+    /// <summary> 伤害 </summary>
     public float DamageMultiplier => 1 + Level * DamageMultiplierPerLevel * StarRatingMultiplier;
 
-    // 暴击
+    /// <summary> 暴击 </summary>
     public int CritBonus => (int)Math.Round(Level * CritPerLevel * StarRatingMultiplier);
 
-    // 使用速度
+    /// <summary> 使用速度 </summary>
     public float UseSpeedMultiplier => 1 + Level * UseSpeedPerLevel * StarRatingMultiplier;
 
-    // 弹幕速度
+    /// <summary> 弹幕速度 </summary>
     public float ShootSpeedMultiplier => 1 + Level * ShootSpeedPerLevel * StarRatingMultiplier;
 
-    // 魔力消耗
+    /// <summary> 魔力消耗 </summary>
     public float ManaCostBonus => Level * ManaCostPerLevel * StarRatingMultiplier;
 
-    /// <summary>
-    /// 应用加成
-    /// </summary>
+    /// <summary> 应用加成 </summary>
     public void ApplyLevelBonuses(Item item)
     {
         if (!item.IsWeapon()) return;
 
         // 暴击
-        item.crit += CritBonus;
+        if (item.DamageType != DamageClass.Summon)
+            item.crit += CritBonus;
 
         // 名字
         item.ClearNameOverride();
@@ -86,7 +86,7 @@ public partial class ItemLevel : TagSerializable
         StarRating = 5;
         LevelCap = 100;
 
-        if (!CanuUpgrade || material.ModItem is not EnhancementStone enhancementStone) return;
+        if (material is null || !CanuUpgrade || material.ModItem is not EnhancementStone enhancementStone) return;
 
         var totalExp = enhancementStone.TotalExp;
         var required = ExpCap - Exp;

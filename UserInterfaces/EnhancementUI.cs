@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Linq;
 using Microsoft.Xna.Framework;
+using SilkyUIFramework;
 using SilkyUIFramework.Attributes;
 using SilkyUIFramework.BasicElements;
 using SilkyUIFramework.Extensions;
-using Steamworks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -11,87 +11,99 @@ using WeaponDevelopment.GlobalItems;
 
 namespace WeaponDevelopment.UserInterfaces;
 
-[AutoloadUI("Vanilla: Radial Hotbars", "EnhancementUI")]
-public class EnhancementUI : BasicBody
+[RegisterUI("Vanilla: Radial Hotbars", "EnhancementUI")]
+public partial class EnhancementUI : BasicBody
 {
-    public override bool Enabled => true;
+    public static EnhancementUI Instance { get; private set; }
 
-    public override void OnInitialize()
+    public EnhancementUI() => Instance = this;
+
+    protected override void OnInitialize()
     {
-        var view = new SUIDraggableView()
-        {
-            CornerRadius = new Vector4(12f),
-            DragIncrement = new Vector2(5f),
-            HAlign = 0.5f,
-            VAlign = 0.5f,
-            BgColor = Color.Black * 0.25f,
-            Display = Display.Flexbox,
-            LayoutDirection = LayoutDirection.Column,
-            Gap = new Vector2(4f),
-        }.Join(this);
-        view.SetPadding(4f);
+        InitializeComponent();
 
-        var title = new SUIText()
-        {
-            Text = "装备强化",
-            TextScale = 0.75f,
-            TextAlign = new Vector2(0.5f),
-        }.Join(view);
+        BorderColor = SUIColor.Border * 0.75f;
+        BackgroundColor = SUIColor.Background * 0.75f;
 
-        var itemContainer = new View
-        {
-            Display = Display.Flexbox,
-            LayoutDirection = LayoutDirection.Row,
-            Gap = new Vector2(4f),
-        }.Join(view);
+        WeaponSlot.BorderColor = Color.Black * 0.5f;
+        WeaponSlot.BackgroundColor = Color.Black * 0.25f;
 
-        var weaponSlot = new SUIItemSlot()
-        {
-            CornerRadius = new Vector4(8f),
-        }.Join(itemContainer);
-        weaponSlot.BorderColor = Color.Black * 0.5f;
-        weaponSlot.BgColor = Color.Black * 0.25f;
-        weaponSlot.SetSize(52, 52);
+        WeaponName.BackgroundColor = SUIColor.Border * 0.5f;
+        WeaponLevel.BackgroundColor = SUIColor.Border * 0.5f;
+        WeaponExp.BackgroundColor = SUIColor.Border * 0.5f;
 
-        var stonelot = new SUIItemSlot()
-        {
-            CornerRadius = new Vector4(8f),
-            ItemScale = 0.846f,
-        }.Join(itemContainer);
-        stonelot.BorderColor = Color.Black * 0.5f;
-        stonelot.BgColor = Color.Black * 0.25f;
-        stonelot.SetSize(52, 52);
 
-        var button = new SUIText
-        {
-            CornerRadius = new Vector4(8f),
-            Border = 2f,
-            BorderColor = Color.Black * 0.5f,
-            BgColor = Color.Black * 0.25f,
-            Text = "强化",
-            TextAlign = new Vector2(0.5f),
-            DragIgnore = false,
-        }.Join(view);
-        button.SetSize(itemContainer.GetDimensions().Width, 30f);
+        WeaponSlot.ItemChanged += (_, args) => { UpdateInfo(args.NewValue); };
 
-        title.SetWidth(itemContainer.GetDimensions().Width);
-
-        button.OnLeftMouseDown += (_, _) =>
+        for (var i = 0; i < 5; i++)
         {
-            var item = weaponSlot.Item;
+            var stoneSlot = new MaterialSlot()
+            {
+                BorderColor = Color.Black * 0.5f,
+                BorderRadius = new Vector4(8f),
+                BackgroundColor = Color.Black * 0.25f,
+                ItemScale = 0.846f,
+            }.Join(MaterialContainer);
+            stoneSlot.SetSize(48f, 48f);
+        }
+
+        Button.LeftMouseDown += (_, _) =>
+        {
+            var item = WeaponSlot.Item;
             if (!item.IsWeapon()) return;
 
             if (item.TryGetGlobalItem<ItemEnhancement>(out var enhancement))
             {
-                enhancement.ItemLevel.Enhance(stonelot.Item);
+                if (MaterialContainer.Children.First() is not MaterialSlot stoneSlot) return;
 
-                item.prefix = 0;
+                enhancement.ItemLevel.Enhance(stoneSlot?.Item);
+
                 item.Refresh(false);
 
                 item.position = Main.LocalPlayer.Center - item.Size / 2f;
                 PopupText.NewText(PopupTextContext.ItemPickupToVoidContainer, item, 1, true);
                 SoundEngine.PlaySound(SoundID.Item37);
             }
+
+            UpdateInfo(item);
         };
+
+        Button.OnUpdateStatus += (gameTime) =>
+        {
+            Button.BorderColor = Button.HoverTimer.Lerp(Color.Black * 0.5f, new Color(100, 230, 230) * 0.75f);
+            Button.BackgroundColor = Button.HoverTimer.Lerp(Color.Black * 0.25f, new Color(100, 230, 230) * 0.2f);
+            Button.TextColor = Button.HoverTimer.Lerp(Color.White, new Color(100, 230, 230));
+            Button.TextBorderColor = Button.HoverTimer.Lerp(Color.Black, Color.Black * 0f);
+        };
+    }
+
+    private void UpdateInfo(Item item)
+    {
+        if (item.TryGetGlobalItem<ItemEnhancement>(out var itemEnhancement))
+        {
+            var itemLevel = itemEnhancement.ItemLevel;
+
+            WeaponName.Text = item.HoverName;
+            WeaponLevel.Text = $"lv.{itemLevel.Level}";
+            WeaponExp.Text = $"Exp.{itemLevel.Exp}/{itemLevel.ExpCap}";
+            Progress.Progress = itemLevel.Exp / (float)itemLevel.ExpCap;
+        }
+        else
+        {
+            WeaponName.Text = "???";
+            WeaponLevel.Text = "???";
+            WeaponExp.Text = "???";
+            Progress.Progress = 0;
+        }
+    }
+
+    protected override void Update(GameTime gameTime)
+    {
+        base.Update(gameTime);
+    }
+
+    protected override void UpdateStatus(GameTime gameTime)
+    {
+        base.UpdateStatus(gameTime);
     }
 }

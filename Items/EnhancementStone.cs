@@ -1,7 +1,7 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace WeaponDevelopment.Items;
 

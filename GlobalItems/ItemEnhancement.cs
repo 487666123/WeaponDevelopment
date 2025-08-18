@@ -4,7 +4,6 @@ using System.IO;
 using log4net.Core;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameContent.Animations;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -13,8 +12,9 @@ namespace WeaponDevelopment.GlobalItems;
 
 /// <summary>
 /// 等级设定: 每次升级提供属性加成
-/// 等级突破设定: 武器默认等级上限为 50，可以通过 1 个突破道具突破最高等级，每次突破提升一级，最高可达 100 级
-/// 进阶设定: 武器有 5 阶，每阶可以提升 20% 加成乘数，最高提升 100%
+/// 进阶设定:
+///     武器默认等级上限为 50，可以通过 1 个进阶道具突破最高等级，每次进阶提升10级，最高可达 100 级
+///     武器有 5 阶，每阶可以提升 20% 属性加成乘数，最高提升 100%
 /// </summary>
 public class ItemEnhancement : GlobalItem
 {
@@ -33,13 +33,13 @@ public class ItemEnhancement : GlobalItem
     {
         if (item.DamageType != DamageClass.Ranged || float.IsNaN(velocity.X) || float.IsNaN(velocity.Y) || velocity == Vector2.Zero) return;
 
-        var shootSpeed = velocity.Length() * ItemLevel.ShootSpeedMultiplier;
-        velocity = Vector2.Normalize(velocity) * shootSpeed;
+        velocity *= ItemLevel.ShootSpeedMultiplier;
     }
 
     // 修改伤害
     public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
     {
+        damage.Base += ItemLevel.BaseDamage;
         damage *= ItemLevel.DamageMultiplier;
     }
 
@@ -56,10 +56,10 @@ public class ItemEnhancement : GlobalItem
     }
 
     // 重置重铸
-    public override void PostReforge(Item item)
-    {
-        item.ResetPrefix();
-    }
+    //public override void PostReforge(Item item)
+    //{
+    //    item.ResetPrefix();
+    //}
 
     public override void ModifyTooltips(Item entity, List<TooltipLine> tooltips)
     {
@@ -98,16 +98,19 @@ public class ItemEnhancement : GlobalItem
             tooltips.Insert(++itemNameIndex, new(Mod, "-2-", "---------------"));
 
             // 伤害
-            tooltips.Insert(++itemNameIndex, new(Mod, "DamageBonus", $"伤害 {(ItemLevel.DamageMultiplier - 1) * 100:+0;-0;0}%")
+            tooltips.Insert(++itemNameIndex, new(Mod, "DamageBonus", $"伤害 {(ItemLevel.DamageMultiplier - 1) * 100:+0;-0;0}% {ItemLevel.BaseDamage:+0.00;-0.00;0}")
             {
                 OverrideColor = Color.OrangeRed
             });
 
             // 暴击
-            tooltips.Insert(++itemNameIndex, new(Mod, "CritBonus", $"暴击 {ItemLevel.CritBonus:+0;-0;0}%")
+            if (entity.DamageType != DamageClass.Summon)
             {
-                OverrideColor = Color.Yellow
-            });
+                tooltips.Insert(++itemNameIndex, new(Mod, "CritBonus", $"暴击 {ItemLevel.CritBonus:+0;-0;0}%")
+                {
+                    OverrideColor = Color.Yellow
+                });
+            }
 
             // 使用速度
             tooltips.Insert(++itemNameIndex, new(Mod, "UseSpeedBonus", $"使用速度 {(ItemLevel.UseSpeedMultiplier - 1) * 100:+0;-0;0}%")

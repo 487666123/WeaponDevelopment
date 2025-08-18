@@ -4,6 +4,10 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaponDevelopment", "WeaponDevelopment.csproj", "{8DCDF315-AB3C-6CA3-CEFC-709A5A8CA05B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyUIFramework", "..\SilkyUIFramework\SilkyUIFramework.csproj", "{A90008FB-DC13-4963-97EE-773124FC8393}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyUIAnalyzer", "..\SilkyUIAnalyzer\SilkyUIAnalyzer.csproj", "{02D83DB4-C5C0-4E22-B85C-6493218DD802}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +18,14 @@ Global
 		{8DCDF315-AB3C-6CA3-CEFC-709A5A8CA05B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DCDF315-AB3C-6CA3-CEFC-709A5A8CA05B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DCDF315-AB3C-6CA3-CEFC-709A5A8CA05B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A90008FB-DC13-4963-97EE-773124FC8393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A90008FB-DC13-4963-97EE-773124FC8393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A90008FB-DC13-4963-97EE-773124FC8393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A90008FB-DC13-4963-97EE-773124FC8393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D83DB4-C5C0-4E22-B85C-6493218DD802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D83DB4-C5C0-4E22-B85C-6493218DD802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D83DB4-C5C0-4E22-B85C-6493218DD802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D83DB4-C5C0-4E22-B85C-6493218DD802}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

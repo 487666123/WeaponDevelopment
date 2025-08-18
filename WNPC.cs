@@ -1,13 +1,15 @@
+using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader;
 using WeaponDevelopment.Items;
 
 namespace WeaponDevelopment;
 
-public class WNPC : GlobalNPC
+public class NPCLoot : GlobalNPC
 {
-    public override void ModifyGlobalLoot(GlobalLoot globalLoot)
+    public override void ModifyNPCLoot(NPC npc, Terraria.ModLoader.NPCLoot npcLoot)
     {
-        globalLoot.Add(ItemDropRule.Common(ModContent.ItemType<EnhancementStone>(), 5, 1, 10));
+        if (npc.damage <= 0) return;
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EnhancementStone>(), 2, 5, 10));
     }
 }

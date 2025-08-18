@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Class 填写对应类名 -->
+<Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation=""
+	  Class="WeaponDevelopment.UserInterfaces.EnhancementUI"
+      Enabled="false" Left="25#" Top="50#" Width="300px" FitHeight="true" BorderRadius="8"
+	  Padding="8" CrossContentAlignment="Stretch" CrossAlignment="Stretch"  Gap="8" FlexDirection="Column">
+	<!-- Title -->
+	<TextView Name="Title" Text="装备强化" TextScale="0.75" TextAlign="0.5"/>
+	<ElementGroup FitWidth="true" FitHeight="true" Gap="4" CrossAlignment="Start">
+		<!-- 装备槽 -->
+		<EquipmentSlot Name="WeaponSlot" Width="48px" Height="48px" BorderRadius="8"/>
+		<!-- 描述 -->
+		<ElementGroup FlexGrow="1" CrossContentAlignment="Stretch" CrossAlignment="Stretch"
+					  FitWidth="true" FitHeight="true" FlexDirection="Column" Gap="4">
+			<TextView Name="WeaponName" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
+					  BorderRadius="4" Text="???" TextScale="0.75"/>
+			<TextView Name="WeaponLevel" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
+					  BorderRadius="4" Text="???" TextScale="0.75"/>
+			<TextView Name="WeaponExp" Height="30px" Padding="8 4 8 4" FitHeight="false" TextAlign="0 0.5"
+					  BorderRadius="4" Text="???" TextScale="0.75"/>
+			<WD-ProgressBar Name="Progress" Width="100%" Height="4px" Progress="0.5" BackgroundColor="rgba(0,0,0,0.25)"/>
+		</ElementGroup>
+	</ElementGroup>
+	<TextView Text="强化材料" TextScale="0.75" TextAlign="0.5"/>
+	<!-- 强化材料容器 -->
+	<ElementGroup Name="MaterialContainer" Gap="4" FitHeight="true" MainAlignment="SpaceBetween"></ElementGroup>
+	<TextView Name="Button" Padding="4" BorderRadius="8" Border="2" BorderColor="rgba(0,0,0,0.5)"
+			  BackgroundColor="rgba(0,0,0,0.25)" Text="强化" TextScale="0.85" TextAlign="0.5"/>
+</Body>
