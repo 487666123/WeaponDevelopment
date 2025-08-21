@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SilkyUIFramework;
 using SilkyUIFramework.Attributes;
 using SilkyUIFramework.BasicElements;
 using SilkyUIFramework.Extensions;
+using SilkyUIFramework.Graphics2D;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -15,7 +17,6 @@ namespace WeaponDevelopment.UserInterfaces;
 public partial class EnhancementUI : BasicBody
 {
     public static EnhancementUI Instance { get; private set; }
-
     public EnhancementUI() => Instance = this;
 
     protected override void OnInitialize()
@@ -42,14 +43,14 @@ public partial class EnhancementUI : BasicBody
             stoneSlot.SetSize(48f, 48f);
         }
 
-        Button.LeftMouseDown += (_, _) =>
+        ToTop.LeftMouseDown += (_, _) =>
         {
             var item = WeaponSlot.Item;
             if (!item.IsWeapon()) return;
 
             if (item.TryGetGlobalItem<ItemEnhancement>(out var enhancement))
             {
-                if (MaterialContainer.Children.First() is not MaterialSlot stoneSlot) return;
+                if (MaterialContainer.Children.FirstOrDefault() is not MaterialSlot stoneSlot) return;
 
                 enhancement.ItemLevel.Enhance(stoneSlot?.Item);
 
@@ -63,12 +64,19 @@ public partial class EnhancementUI : BasicBody
             UpdateInfo(item);
         };
 
-        Button.OnUpdateStatus += (gameTime) =>
+        SetButtonHoverAnimation(ToTop);
+        SetButtonHoverAnimation(ToOne);
+    }
+
+    private static void SetButtonHoverAnimation(UITextView button)
+    {
+        button.OnUpdateStatus += (gameTime) =>
         {
-            Button.BorderColor = Button.HoverTimer.Lerp(Color.Black * 0.5f, new Color(100, 230, 230) * 0.75f);
-            Button.BackgroundColor = Button.HoverTimer.Lerp(Color.Black * 0.25f, new Color(100, 230, 230) * 0.2f);
-            Button.TextColor = Button.HoverTimer.Lerp(Color.White, new Color(100, 230, 230));
-            Button.TextBorderColor = Button.HoverTimer.Lerp(Color.Black, Color.Black * 0f);
+            var cyanBlue = new Color(100, 230, 230);
+            button.BorderColor = button.HoverTimer.Lerp(Color.Black, cyanBlue) * 0.5f;
+            button.BackgroundColor = button.HoverTimer.Lerp(Color.Black, cyanBlue) * 0.25f;
+            button.TextColor = button.HoverTimer.Lerp(Color.White, cyanBlue);
+            button.TextBorderColor = button.HoverTimer.Lerp(Color.Black, Color.Transparent);
         };
     }
 
@@ -104,5 +112,26 @@ public partial class EnhancementUI : BasicBody
     protected override void UpdateStatus(GameTime gameTime)
     {
         base.UpdateStatus(gameTime);
+    }
+
+    protected override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+    {
+        if (BlurMakeSystem.BlurAvailable && !Main.gameMenu)
+        {
+            if (BlurMakeSystem.SingleBlur)
+            {
+                var batch = Main.spriteBatch;
+                batch.End();
+                BlurMakeSystem.KawaseBlur();
+                batch.Begin(0, null, SamplerState.PointClamp, null, SilkyUI.RasterizerStateForOverflowHidden, null,
+                    SilkyUI.TransformMatrix);
+            }
+
+            SDFRectangle.SampleVersion(BlurMakeSystem.BlurRenderTarget,
+                Bounds.Position * Main.UIScale, Bounds.Size * Main.UIScale, BorderRadius * Main.UIScale,
+                Matrix.Identity);
+        }
+
+        base.Draw(gameTime, spriteBatch);
     }
 }
